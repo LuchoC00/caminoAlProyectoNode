@@ -66,6 +66,17 @@ class Product {
       this?.category
     );
   }
+
+  rightUnion(product) {
+    this.title = product.title ?? this.title;
+    this.description = product.description ?? this.description;
+    this.price = product.price ?? this.price;
+    this.thumbnail = product.thumbnail ?? this.thumbnail;
+    this.code = product.code ?? this.code;
+    this.stock = product.stock ?? this.stock;
+    this.status = product.status ?? this.status;
+    this.category = product.category ?? this.category;
+  }
 }
 
 export default Product;
