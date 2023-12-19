@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Producto de Ejemplo",
+    "description": "Esta es una descripción de ejemplo",
+    "price": 20,
+    "thumbnail": [],
+    "code": "ABCs123",
+    "stock": 50,
+    "status": true,
+    "category": "Electrónicos"
+  },
+  {
+    "title": "Producto de Ejemplo",
+    "description": "Esta es una descripción de ejemplo",
+    "price": 20,
+    "thumbnail": [],
+    "code": "ABC123",
+    "stock": 50,
+    "status": true,
+    "category": "Electrónicos"
+  }
+]

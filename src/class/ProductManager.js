@@ -1,17 +1,27 @@
-import DataManager from './DataMAnager';
-import Product from './Product';
+import DataManager from './DataManager.js';
+import Product from './Product.js';
 
 class ProductManager {
   constructor(path) {
     this.dataManager = new DataManager(path);
     this.products = [];
+    this._getData();
+  }
+
+  async _sendData() {
+    await this.dataManager.writeObjectList(this.products);
+  }
+
+  async _getData() {
+    const data = await this.dataManager.getObjectList();
+    this.products = data.map((obj) => Product.make(obj));
   }
 
   addProduct(product) {
     if (!this.esProductoValido(product)) {
       return false;
     }
-    return this._add();
+    return this._add(product);
   }
 
   esProductoValido(product) {
@@ -41,22 +51,31 @@ class ProductManager {
   }
 
   esCodigoRepetido(codigo) {
-    if (this.products.some((prod) => prod.code === codigo)) {
-      console.error(`El codigo ${codigo} es un codigo repetido`);
+    if (!this.products.some((prod) => prod.code === codigo)) {
       return false;
     }
+    console.error(`El codigo ${codigo} es un codigo repetido`);
     return true;
   }
 
   _add(product) {
-    this.products.push(product);
+    const length = this.products.push(product);
+    this._sendData();
+    return Boolean(length);
   }
 
   removeProduct(product) {
     if (!this.existeProduct(product)) {
       console.error(`No existe el producto: ${product}`);
     }
-    return this._remove(_getPos(product));
+    return this._remove(this._getPos(product));
+  }
+
+  deleteProduct(id) {
+    if (!this.esIdValido(id)) {
+      throw new Error('ID invalido');
+    }
+    return this.removeProduct(this.getProductById(id));
   }
 
   existeProduct(product) {
@@ -71,7 +90,9 @@ class ProductManager {
   }
 
   _remove(pos) {
-    return this.products.splice(pos, 1)[0];
+    const pop = this.products.splice(pos, 1)[0];
+    this._sendData();
+    return pop;
   }
 
   getId(product) {
@@ -96,21 +117,35 @@ class ProductManager {
   }
 
   updateProduct(id, newProduct) {
-    if (!this.esIdValido(id)) {
-      throw new Error('ID invalido');
+    try {
+      if (!this.esIdValido(id)) {
+        throw new Error('ID invalido');
+      }
+      this.products[id - 1] = this.getProductById(id).rightUnion(newProduct);
+      this._sendData();
+      return true;
+    } catch (error) {
+      return false;
     }
-    this.getProductById(id).rightUnion(newProduct);
   }
 
   remplazeProduct(id, newProduct) {
-    if (!this.esIdValido(id)) {
-      throw new Error('ID invalido');
+    try {
+      if (!this.esIdValido(id)) {
+        throw new Error('ID invalido');
+      }
+      const oldProduct = this.removeProduct(this.getProductById(id));
+      if (!this.esProductoValido(newProduct)) {
+        this.products[id - 1] = oldProduct;
+        throw new Error('No se pudo actualizar el producto con el ID: ' + id);
+      }
+      this.products[id - 1] = newProduct;
+      this._sendData();
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
     }
-    const oldProduct = this.removeProduct(this.getProductById(id));
-    if (!this.esProductoValido(newProduct)) {
-      this.products[id - 1] = oldProduct;
-    }
-    this.products[id - 1] = newProduct;
   }
 }
 

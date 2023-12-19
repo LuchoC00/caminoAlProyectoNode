@@ -1,5 +1,5 @@
-import Converter from './Converter';
-import Printer from './Printer';
+import Converter from './Converter.js';
+import Printer from './Printer.js';
 
 class DataManager {
   constructor(path) {
@@ -14,10 +14,16 @@ class DataManager {
       console.error(error);
     }
   }
+
   async getObjectList() {
     try {
+      if (!(await this.printer.existFile())) {
+        await this.printer.create();
+        return [];
+      }
       const string = await this.printer.read();
-      return Converter.jsonToObjects(string);
+      const s = Converter.jsonToObjects(string);
+      return s;
     } catch (error) {
       console.error(error);
       return null;

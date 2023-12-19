@@ -35,6 +35,20 @@ class Product {
     }
   }
 
+  static makeRandom() {
+    const numberRandom = Math.floor(Math.random() * 1000);
+    return this.make({
+      title: 'Producto de Ejemplo',
+      description: 'Esta es una descripción de ejemplo',
+      price: 20,
+      thumbnail: [],
+      code: 'ABC' + String(numberRandom),
+      stock: 50,
+      status: true,
+      category: 'Electrónicos',
+    });
+  }
+
   static isEquals(product1, product2) {
     if (!(product1 instanceof Product && product2 instanceof Product)) {
       throw new Error(`Algun objeto ingresado no es de tipo Product\n` + error);
@@ -76,6 +90,7 @@ class Product {
     this.stock = product.stock ?? this.stock;
     this.status = product.status ?? this.status;
     this.category = product.category ?? this.category;
+    return this;
   }
 }
 
