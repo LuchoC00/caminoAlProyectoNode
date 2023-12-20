@@ -19,8 +19,31 @@ const sweetAlert = (title, text, inputValid) => {
   });
 };
 
+const cargarDatos = (datos) => {
+  chatList.innerHTML = '';
+  datos.forEach((item) => {
+    const listItem = document.createElement('li');
+    listItem.classList.add('chatItemList');
+
+    const usernameItem = document.createElement('p');
+    usernameItem.classList.add('username');
+    usernameItem.textContent = item.user.username + ':';
+
+    const messageItem = document.createElement('p');
+    messageItem.classList.add('message');
+    messageItem.textContent = item.message;
+
+    listItem.appendChild(usernameItem);
+    listItem.appendChild(messageItem);
+
+    chatList.appendChild(listItem);
+  });
+};
+
 const user = {};
 const chatbox = document.querySelector('#chatbox');
+const chatList = document.querySelector('#chatList');
+const chatEmail = document.querySelector('#email');
 
 sweetAlert('bienvenido', 'Ingrese su nombre de usuario', (value) => {
   return (
@@ -36,6 +59,7 @@ sweetAlert('bienvenido', 'Ingrese su nombre de usuario', (value) => {
     );
   }).then((result) => {
     user.email = result.value;
+    chatEmail.textContent = user.email;
     socket.emit('inicioUser', user);
   });
 });
@@ -48,5 +72,5 @@ chatbox.addEventListener('keyup', (e) => {
 });
 
 socket.on('messages', (data) => {
-  console.log(data);
+  cargarDatos(data);
 });

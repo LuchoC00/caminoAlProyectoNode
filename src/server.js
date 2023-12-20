@@ -57,12 +57,13 @@ chatIo.on('connection', (socketClient) => {
   console.log(`Nuevo cliente conectado |-->| ID:${socketClient.id}`);
 
   socketClient.on('inicioUser', (data) => {
-    console.log(data);
+    console.log(
+      `Usuario registrado --> Username: ${data.username} | Email: ${data.email}`,
+    );
   });
 
   socketClient.emit('messages', messages);
   socketClient.on('message', (data) => {
-    console.log(data);
     messages.push(data);
     chatIo.emit('messages', messages);
   });

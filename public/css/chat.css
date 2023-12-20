@@ -1,0 +1,75 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.chatContainer{
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  background-color: gainsboro;
+}
+
+.emailContainer{
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  width: 100%;
+  height: 10%;
+}
+
+.email{
+  margin: 1rem 3rem;
+  color: gray;
+}
+
+
+.writeContainer{
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  width: 100%;
+  height: 15%;
+  background-color: lightgrey;
+} 
+
+.chatbox{
+  border: 2px solid gray;
+  border-radius: 2rem;
+  background-color: lightgray;
+  width: 80%;
+  height: min(50%,8rem) ;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+}
+
+.chatListContainer{
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  width: 100%;
+  height: 75%;
+  overflow: auto;
+  padding: 1rem 5rem;
+  background-color: rgb(200, 200, 200);
+}
+
+.chatItemList{
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  list-style: none;
+}
+
+.username{
+  color: green;
+  font-style: italic;
+  text-decoration: dashed;
+  margin: auto 1rem;
+}
+
+.message{
+  color: rgba(25, 25, 25, 0.75);
+}
