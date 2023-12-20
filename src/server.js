@@ -1,6 +1,7 @@
 import express from 'express';
 import handlebars from 'express-handlebars';
 import { __dirSrc, __dirProyecto } from './utils/dirnames.js';
+import { Server } from 'socket.io';
 
 import cartsRouter from './routes/carts.routes.js';
 import productsRouter from './routes/products.routes.js';
@@ -13,6 +14,12 @@ import CartManager from './class/CartManager.js';
 // Inicializacion de express
 const app = express();
 const port = 8080;
+const httpServer = app.listen(port, () => {
+  console.log(`Servidor escuchando en el puerto: ${port}`);
+});
+
+const io = new Server(httpServer);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -41,8 +48,16 @@ app.use('/form', formRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 
-app.listen(port, () => {
-  console.log(`Servidor escuchando en el puerto: ${port}`);
+// Comunicacion con el Socket
+io.on('connection', (socketClient) => {
+  console.log('nuevo cliente conectado');
+
+  socketClient.on('message', (data) => {
+    console.log(data);
+    socketClient.emit('serverMessage', `Bien usuario ${socketClient.id},y tu?`);
+  });
+
+  socketClient.broadcast.emit('messageAll', 'hola a todos');
 });
 
 export { prodManager, cartsManager };
