@@ -1,0 +1,24 @@
+<div class="container">
+{{#if isError}}
+  <div class="responseContainer">
+    <h3 class="status error">{{status}}</h3>
+    <p class="listItemValue error">{{info}} </p>
+  </div>
+{{else}}
+  <div class="responseContainer">
+    <h3 class="status">{{status}}</h3>
+    {{#if isIterable}}
+    <ul class="listContainer">
+      {{#each info}}
+      <div class="listItem">
+        <li class="listItemKey">{{@key}}: </li>
+        <li class="listItemValue">{{this}}</li>
+      </div>
+      {{/each}}
+    </ul>
+    {{else}}
+      <p class="listItemValue">{{info}} </p>
+    {{/if}}
+  </div>
+{{/if}}
+</div>

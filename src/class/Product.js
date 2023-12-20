@@ -15,7 +15,7 @@ class Product {
     this.thumbnail = thumbnail;
     this.code = code;
     this.stock = stock;
-    this.status = status ? status : true;
+    this.status = true;
     this.category = category;
   }
   static make(objeto) {
@@ -65,7 +65,7 @@ class Product {
     );
   }
   toString() {
-    return ` | Title: ${this.title} , Price: ${this.price} , Stock: ${this.stock} , Code: ${this.code} | `;
+    return `Title: ${this.title}, Description: ${this.description}, Price: ${this.price}, Thumbnail: ${this.thumbnail}, Code: ${this.code}, Stock: ${this.stock}, Status: ${this.status}, Category: ${this.category}`;
   }
 
   esProductoIncompleto() {

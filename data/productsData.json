@@ -1,22 +1,22 @@
 [
   {
-    "title": "Producto de Ejemplo",
-    "description": "Esta es una descripción de ejemplo",
-    "price": 20,
-    "thumbnail": [],
-    "code": "ABCs123",
-    "stock": 50,
+    "title": "asdasd",
+    "description": "asddas",
+    "price": "5",
+    "thumbnail": "www.google.com",
+    "code": "asdsdad",
+    "stock": "5",
     "status": true,
-    "category": "Electrónicos"
+    "category": "asddasads"
   },
   {
-    "title": "Producto de Ejemplo",
-    "description": "Esta es una descripción de ejemplo",
-    "price": 20,
-    "thumbnail": [],
-    "code": "ABC123",
-    "stock": 50,
+    "title": "asdasd",
+    "description": "saddsa",
+    "price": "2",
+    "thumbnail": "www.google.com",
+    "code": "124124",
+    "stock": "5",
     "status": true,
-    "category": "Electrónicos"
+    "category": "dsadas"
   }
 ]

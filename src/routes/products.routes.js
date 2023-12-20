@@ -4,7 +4,7 @@ import { prodManager } from '../server.js';
 const productRouter = Router();
 
 const path = '/';
-const infoStatus = { status: 'Error', info: '' };
+const infoStatus = { status: '', info: '' };
 
 //GET query
 productRouter.get(path, (req, res) => {
@@ -32,16 +32,8 @@ productRouter.get(path + ':id', (req, res) => {
 
 //POST addProduct
 productRouter.post(path, (req, res) => {
-  const {
-    title,
-    description,
-    price,
-    thumbnail,
-    code,
-    stock,
-    status,
-    category,
-  } = req.body;
+  const { title, description, price, thumbnail, code, stock, category } =
+    req.body;
 
   let rutes = [];
   if (thumbnail) {
@@ -55,23 +47,21 @@ productRouter.post(path, (req, res) => {
     rutes,
     code,
     stock,
-    status,
+    true,
     category,
   );
 
   if (product.esProductoIncompleto()) {
+    infoStatus.status = 'Error';
     infoStatus.info = `No se ingresaron todos los datos para armar el producto`;
-    res.json(infoStatus);
-    return;
   } else if (prodManager.esCodigoRepetido(code)) {
+    infoStatus.status = 'Error';
     infoStatus.info = `el producto ingresado tiene un codigo repetido`;
-    res.json(infoStatus);
-    return;
+  } else {
+    prodManager.addProduct(product);
+    infoStatus.status = 'Añadido exitosamente';
+    infoStatus.info = product;
   }
-
-  prodManager.addProduct(product);
-  infoStatus.status = 'Añadido exitosamente';
-  infoStatus.info = product;
   res.json(infoStatus);
 });
 
@@ -80,11 +70,11 @@ productRouter.put(path + ':id', (req, res) => {
   const { id } = req.params;
   if (!prodManager.esIdValido(Number(id))) {
     infoStatus.info = `No existe producto con la id ${id}`;
+    infoStatus.status = 'Error';
     res.json(infoStatus);
     return;
   }
 
-  const oldProduct = prodManager.getProductById(Number(id));
   const {
     title,
     description,
@@ -113,13 +103,13 @@ productRouter.put(path + ':id', (req, res) => {
   );
 
   if (!prodManager.updateProduct(Number(id), product)) {
+    infoStatus.status = 'Error';
     infoStatus.info = `No se ha podido actualizar el producto`;
-    res.json(infoStatus);
-    return;
+  } else {
+    infoStatus.status = 'Modificado exitosamente';
+    infoStatus.info = product;
   }
 
-  infoStatus.status = 'Modificado exitosamente';
-  infoStatus.info = product;
   res.json(infoStatus);
 });
 
@@ -128,18 +118,17 @@ productRouter.delete(path + ':id', (req, res) => {
   const { id } = req.params;
   if (!prodManager.esIdValido(Number(id))) {
     infoStatus.info = `No existe producto con la id ${id}`;
-    res.json(infoStatus);
-    return;
+    infoStatus.status = 'Error';
+  } else {
+    const oldProduct = prodManager.deleteProduct(Number(id));
+    if (!oldProduct) {
+      infoStatus.info = `error al eliminar el producto: ${oldProduct}`;
+      infoStatus.status = 'Error';
+    } else {
+      infoStatus.status = 'Eliminado exitosamente';
+      infoStatus.info = oldProduct;
+    }
   }
-
-  const oldProduct = prodManager.deleteProduct(Number(id));
-  if (!oldProduct) {
-    infoStatus.info = `error al eliminar el producto: ${oldProduct}`;
-    res.json(infoStatus);
-    return;
-  }
-  infoStatus.status = 'Eliminado exitosamente';
-  infoStatus.info = oldProduct;
   res.json(infoStatus);
 });
 

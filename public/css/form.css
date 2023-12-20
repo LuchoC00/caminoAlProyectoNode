@@ -1,0 +1,27 @@
+
+
+.form{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  height: max-content;
+  width: 50%;
+  margin: auto;
+}
+
+.form > *{
+  width: 25%;
+}
+
+.form label{
+  font-size: large;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  
+}
+
+.form input, .form textarea{
+  font-size: large;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  
+}

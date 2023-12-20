@@ -1,0 +1,55 @@
+.container{
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  height: max-content;
+  margin: auto;
+  background-color: lightgrey;
+  border: 2px solid black;
+}
+
+.responseContainer{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 70%;
+}
+
+.listContainer{
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+}
+
+.listItem{
+  width: 100%;
+  list-style: none;
+  display: flex;
+  align-self: center;
+  align-items: center;
+}
+
+.listItemKey{
+  color: rgb(0, 0, 75);
+  font-size: x-large;
+  font-weight: bold;
+  margin: 0.5rem;
+}
+
+.listItemValue{
+  color: rgb(25, 25, 25);
+  font-size: x-large;
+  margin: 0.5rem;
+}
+
+.status{
+  color: darkgreen;
+  font-size: xx-large;
+  margin: 1rem 2rem;
+}
+
+.error{
+  color: rgba(200, 15, 15, 0.9);
+}
+

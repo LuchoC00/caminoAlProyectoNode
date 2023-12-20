@@ -5,7 +5,10 @@ const rootRouter = Router();
 const path = '/';
 
 rootRouter.get(path, (req, res) => {
-  res.send('Bienvenido a mi primer servidor');
+  res.render('index', {
+    bienvenida: 'Luciano',
+    fileCss: 'style.css',
+  });
 });
 
 export default rootRouter;
