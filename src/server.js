@@ -7,6 +7,7 @@ import cartsRouter from './routes/carts.routes.js';
 import productsRouter from './routes/products.routes.js';
 import rootRouter from './routes/root.routes.js';
 import formRouter from './routes/form.routes.js';
+import chatRouter from './routes/chat.routes.js';
 
 import ProductManager from './class/ProductManager.js';
 import CartManager from './class/CartManager.js';
@@ -19,6 +20,7 @@ const httpServer = app.listen(port, () => {
 });
 
 const io = new Server(httpServer);
+const chatIo = io.of('/chat');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -47,17 +49,23 @@ app.use('/', rootRouter);
 app.use('/form', formRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
+app.use('/chat', chatRouter);
 
 // Comunicacion con el Socket
-io.on('connection', (socketClient) => {
-  console.log('nuevo cliente conectado');
+const messages = [];
+chatIo.on('connection', (socketClient) => {
+  console.log(`Nuevo cliente conectado |-->| ID:${socketClient.id}`);
 
-  socketClient.on('message', (data) => {
+  socketClient.on('inicioUser', (data) => {
     console.log(data);
-    socketClient.emit('serverMessage', `Bien usuario ${socketClient.id},y tu?`);
   });
 
-  socketClient.broadcast.emit('messageAll', 'hola a todos');
+  socketClient.emit('messages', messages);
+  socketClient.on('message', (data) => {
+    console.log(data);
+    messages.push(data);
+    chatIo.emit('messages', messages);
+  });
 });
 
 export { prodManager, cartsManager };
