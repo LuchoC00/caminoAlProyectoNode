@@ -1,55 +1,39 @@
 import { Router } from 'express';
-import Product from '../class/Product.js';
-import { prodManager } from '../server.js';
+import ProductDao from '../daos/dbmanager/Product.dao.js';
 
 const formRouter = Router();
 const path = '/';
-const infoStatus = { status: 'Error', info: '' };
 
+//GET renderForm
 formRouter.get(path, (req, res) => {
   res.render('form', {
     fileCss: 'form.css',
   });
 });
 
-formRouter.post(path, (req, res) => {
-  const { title, description, price, thumbnail, code, stock, category } =
-    req.body;
+//POST addProduct
+formRouter.post(path, async (req, res) => {
+  try {
+    const { title, description, price, thumbnail, code, stock, category, id } =
+      req.body;
 
-  let rutes = [];
-  if (thumbnail) {
-    rutes = thumbnail;
+    const product = {
+      title: title,
+      description: description,
+      price: price,
+      thumbnail: thumbnail,
+      code: code,
+      stock: stock,
+      category: category,
+      _id: id,
+    };
+
+    const status = await ProductDao.addProduct(product);
+    res.json(status);
+  } catch (error) {
+    console.error(error);
+    res.json(error);
   }
-
-  const product = new Product(
-    title,
-    description,
-    price,
-    rutes,
-    code,
-    stock,
-    true,
-    category,
-  );
-
-  if (product.esProductoIncompleto()) {
-    infoStatus.status = 'Error';
-    infoStatus.info = `No se ingresaron todos los datos para armar el producto`;
-  } else if (prodManager.esCodigoRepetido(code)) {
-    infoStatus.status = 'Error';
-    infoStatus.info = `el producto ingresado tiene un codigo repetido`;
-  } else {
-    prodManager.addProduct(product);
-    infoStatus.status = 'Añadido exitosamente';
-    infoStatus.info = product;
-  }
-  res.render('respuesta', {
-    status: infoStatus.status,
-    info: infoStatus.info,
-    isError: infoStatus.status === 'Error',
-    isIterable: true,
-    fileCss: 'respuesta.css',
-  });
 });
 
 export default formRouter;

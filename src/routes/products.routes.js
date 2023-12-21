@@ -1,135 +1,99 @@
 import { Router } from 'express';
-import Product from '../class/Product.js';
-import { prodManager } from '../server.js';
+import ProductDao from '../daos/dbmanager/Product.dao.js';
+
 const productRouter = Router();
 
 const path = '/';
-const infoStatus = { status: '', info: '' };
 
 //GET query
-productRouter.get(path, (req, res) => {
-  const { limit } = req.query;
-  const products = prodManager.getProducts();
-  if (limit && Number(limit) < products.length) {
-    res.json(products.slice(0, Number(limit)));
-    return;
+productRouter.get(path, async (req, res) => {
+  try {
+    const products = await ProductDao.getAllProducts();
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.json(error);
   }
-  res.json(products);
 });
 
 //GET params
-productRouter.get(path + ':id', (req, res) => {
-  const { id } = req.params;
-
-  if (!prodManager.esIdValido(Number(id))) {
-    infoStatus.info = `No existe producto con la id ${id}`;
-    res.json(infoStatus);
-    return;
+productRouter.get(path + ':id', async (req, res) => {
+  try {
+    const product = await ProductDao.getProductById(id);
+    res.json(product);
+  } catch (error) {
+    console.error(error);
+    res.json(error);
   }
-  const product = prodManager.getProductById(Number(id));
-  res.json(product);
 });
 
 //POST addProduct
-productRouter.post(path, (req, res) => {
-  const { title, description, price, thumbnail, code, stock, category } =
-    req.body;
-
-  let rutes = [];
-  if (thumbnail) {
-    rutes = thumbnail;
+productRouter.post(path, async (req, res) => {
+  try {
+    const { title, description, price, thumbnail, code, stock, category, id } =
+      req.body;
+    const product = {
+      title: title,
+      description: description,
+      price: price,
+      thumbnail: thumbnail,
+      code: code,
+      stock: stock,
+      category: category,
+      _id: id,
+    };
+    const status = await ProductDao.addProduct(product);
+    res.json(status);
+  } catch (error) {
+    console.error(error);
+    res.json(error);
   }
-
-  const product = new Product(
-    title,
-    description,
-    price,
-    rutes,
-    code,
-    stock,
-    true,
-    category,
-  );
-
-  if (product.esProductoIncompleto()) {
-    infoStatus.status = 'Error';
-    infoStatus.info = `No se ingresaron todos los datos para armar el producto`;
-  } else if (prodManager.esCodigoRepetido(code)) {
-    infoStatus.status = 'Error';
-    infoStatus.info = `el producto ingresado tiene un codigo repetido`;
-  } else {
-    prodManager.addProduct(product);
-    infoStatus.status = 'Añadido exitosamente';
-    infoStatus.info = product;
-  }
-  res.json(infoStatus);
 });
 
 //PUT actualizar
-productRouter.put(path + ':id', (req, res) => {
-  const { id } = req.params;
-  if (!prodManager.esIdValido(Number(id))) {
-    infoStatus.info = `No existe producto con la id ${id}`;
-    infoStatus.status = 'Error';
+productRouter.put(path + ':id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      title,
+      description,
+      price,
+      thumbnail,
+      code,
+      stock,
+      status,
+      category,
+    } = req.body;
+
+    const product = {
+      title: title,
+      description: description,
+      price: price,
+      thumbnail: thumbnail,
+      code: code,
+      stock: stock,
+      category: category,
+      status: status,
+      _id: id,
+    };
+    const infoStatus = await ProductDao.updateProduct(id, product);
     res.json(infoStatus);
-    return;
+  } catch (error) {
+    console.error(error);
+    res.json(error);
   }
-
-  const {
-    title,
-    description,
-    price,
-    thumbnail,
-    code,
-    stock,
-    status,
-    category,
-  } = req.body;
-
-  let rutes = [];
-  if (thumbnail) {
-    rutes = thumbnail;
-  }
-
-  const product = new Product(
-    title,
-    description,
-    price,
-    rutes,
-    code,
-    stock,
-    status,
-    category,
-  );
-
-  if (!prodManager.updateProduct(Number(id), product)) {
-    infoStatus.status = 'Error';
-    infoStatus.info = `No se ha podido actualizar el producto`;
-  } else {
-    infoStatus.status = 'Modificado exitosamente';
-    infoStatus.info = product;
-  }
-
-  res.json(infoStatus);
 });
 
 //DELETE removeProduct
-productRouter.delete(path + ':id', (req, res) => {
-  const { id } = req.params;
-  if (!prodManager.esIdValido(Number(id))) {
-    infoStatus.info = `No existe producto con la id ${id}`;
-    infoStatus.status = 'Error';
-  } else {
-    const oldProduct = prodManager.deleteProduct(Number(id));
-    if (!oldProduct) {
-      infoStatus.info = `error al eliminar el producto: ${oldProduct}`;
-      infoStatus.status = 'Error';
-    } else {
-      infoStatus.status = 'Eliminado exitosamente';
-      infoStatus.info = oldProduct;
-    }
+productRouter.delete(path + ':id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const status = await ProductDao.deleteProduct(id);
+    res.json(status);
+  } catch (error) {
+    console.error(error);
+    res.json(error);
   }
-  res.json(infoStatus);
 });
 
 export default productRouter;
