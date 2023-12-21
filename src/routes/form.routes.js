@@ -28,11 +28,21 @@ formRouter.post(path, async (req, res) => {
       _id: id,
     };
 
-    const status = await ProductDao.addProduct(product);
-    res.json(status);
+    const response = await ProductDao.addProduct(product);
+    res.render('respuesta', {
+      info: product,
+      isIterable: true,
+      fileCss: 'respuesta.css',
+      status: 'Añadido exitosamente',
+    });
   } catch (error) {
     console.error(error);
-    res.json(error);
+    res.render('respuesta', {
+      info: error,
+      isError: true,
+      fileCss: 'respuesta.css',
+      status: 'Error',
+    });
   }
 });
 
